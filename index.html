@@ -1,0 +1,2990 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Melan Lounge — Sumqayıt</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --gold: #c9a84c;
+        --gold-light: #e8c97a;
+        --black: #0a0a0a;
+        --dark: #111111;
+        --dark2: #1a1a1a;
+        --dark3: #222222;
+        --white: #f5f0e8;
+        --gray: #888880;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--black);
+        color: var(--white);
+        font-family: "Montserrat", sans-serif;
+        overflow-x: hidden;
+        cursor: none;
+      }
+
+      /* ── CURSOR ── */
+      #cur {
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 99999;
+        transform: translate(-50%, -50%);
+      }
+      #cur2 {
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(201, 168, 76, 0.5);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 99998;
+        transform: translate(-50%, -50%);
+        transition:
+          left 0.12s ease,
+          top 0.12s ease,
+          width 0.3s,
+          height 0.3s;
+        opacity: 0.7;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding: 24px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.4s;
+      }
+      nav.scrolled {
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 16px 60px;
+        border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+      }
+      .nav-logo img {
+        height: 44px;
+        object-fit: contain;
+      }
+      .nav-links {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--white);
+        text-decoration: none;
+        font-size: 10px;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        opacity: 0.75;
+        transition: all 0.3s;
+      }
+      .nav-links a:hover {
+        opacity: 1;
+        color: var(--gold);
+      }
+      .lang-sw {
+        display: flex;
+        gap: 6px;
+      }
+      .lang-btn {
+        background: none;
+        border: 1px solid rgba(201, 168, 76, 0.25);
+        color: var(--gray);
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        padding: 4px 8px;
+        cursor: none;
+        transition: all 0.3s;
+        font-family: "Montserrat", sans-serif;
+      }
+      .lang-btn.active,
+      .lang-btn:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: none;
+      }
+      .hamburger span {
+        display: block;
+        width: 24px;
+        height: 1px;
+        background: var(--white);
+        transition: all 0.3s;
+      }
+      .mob-menu {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 10, 10, 0.98);
+        z-index: 999;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 36px;
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .mob-menu.open {
+        opacity: 1;
+      }
+      .mob-menu a {
+        color: var(--white);
+        text-decoration: none;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 38px;
+        font-weight: 300;
+        letter-spacing: 4px;
+        transition: color 0.3s;
+      }
+      .mob-menu a:hover {
+        color: var(--gold);
+      }
+
+      /* ── HERO ── */
+      #hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* bg starts dark, reveals after text finishes */
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: url("hall-1.jpg") center/cover no-repeat;
+        opacity: 0;
+        transition: opacity 1.8s ease;
+      }
+      .hero-bg.reveal {
+        opacity: 0.35;
+      }
+      .hero-ov {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(10, 10, 10, 0.15),
+          rgba(10, 10, 10, 0.65)
+        );
+        z-index: 1;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 100%;
+      }
+
+      /* SVG stroke draw — slow 7-8s */
+      .hero-svg {
+        display: block;
+        width: min(92vw, 1100px);
+        margin: 0 auto;
+        overflow: visible;
+      }
+      .hero-svg text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 400px;
+        font-weight: 300;
+        fill: none;
+        stroke: var(--gold);
+        stroke-width: 0.8;
+        stroke-dasharray: 8000;
+        stroke-dashoffset: 8000;
+        animation: drawText 12s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+        letter-spacing: 10px;
+        text-transform: uppercase;
+      }
+      /* after text finishes, fade it out */
+      .hero-svg.done text {
+        animation:
+          drawText 12s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards,
+          fadeSvg 1.2s ease 8.5s forwards;
+      }
+      @keyframes drawText {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes fadeSvg {
+        to {
+          opacity: 0;
+        }
+      }
+
+      .hero-sub {
+        font-size: 11px;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-top: 20px;
+        opacity: 0;
+        animation: fadeUp 0.4s ease 5.5s forwards;
+      }
+      .hero-line {
+        width: 50px;
+        height: 1px;
+        background: var(--gold);
+        margin: 18px auto;
+        opacity: 0;
+        animation: fadeUp 0.4s ease 5.8s forwards;
+      }
+      .hero-tag {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: rgba(245, 240, 232, 0.55);
+        font-weight: 300;
+        opacity: 0;
+        animation: fadeUp 0.4s ease 5.1s forwards;
+      }
+      .hero-scroll {
+        position: absolute;
+        bottom: 38px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        opacity: 0;
+        animation: fadeUp 0.4s ease 5.5s forwards;
+        cursor: none;
+        z-index: 3;
+      }
+      .hero-scroll span {
+        font-size: 9px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+      .scroll-line {
+        width: 1px;
+        height: 46px;
+        background: linear-gradient(to bottom, var(--gold), transparent);
+        animation: pulse 2s ease infinite;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      /* ── SECTIONS ── */
+      .sec {
+        padding: 120px 60px;
+      }
+      .sec-label {
+        font-size: 10px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: block;
+        margin-bottom: 14px;
+      }
+      .sec-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(40px, 6vw, 70px);
+        font-weight: 300;
+        line-height: 1.05;
+        color: var(--white);
+        margin-bottom: 20px;
+      }
+      .sec-div {
+        width: 50px;
+        height: 1px;
+        background: var(--gold);
+        margin-bottom: 28px;
+      }
+      .sec-text {
+        font-size: 14px;
+        line-height: 1.9;
+        color: rgba(245, 240, 232, 0.6);
+        font-weight: 300;
+        max-width: 560px;
+      }
+      .cta-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--gold);
+        text-decoration: none;
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-top: 32px;
+        transition: gap 0.3s;
+      }
+      .cta-link:hover {
+        gap: 16px;
+      }
+
+      /* ── ABOUT ── */
+      #about {
+        background: var(--dark);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 90px;
+        align-items: center;
+      }
+      .about-imgs {
+        position: relative;
+        height: 580px;
+      }
+      .about-img-a {
+        position: absolute;
+        width: 74%;
+        height: 78%;
+        object-fit: cover;
+        top: 0;
+        right: 0;
+        transition: transform 0.6s;
+      }
+      .about-img-b {
+        position: absolute;
+        width: 48%;
+        height: 52%;
+        object-fit: cover;
+        bottom: 0;
+        left: 0;
+        border: 4px solid var(--dark);
+        transition: transform 0.6s;
+      }
+      .about-img-a:hover {
+        transform: scale(1.02);
+      }
+      .about-img-b:hover {
+        transform: scale(1.02);
+      }
+      /* Logo badge replacing text badge */
+      .about-badge {
+        position: absolute;
+        width: 130px;
+        height: 130px;
+        border: 1px solid rgba(201, 168, 76, 0.4);
+        bottom: 50px;
+        right: -20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 10, 10, 0.92);
+        z-index: 2;
+        padding: 12px;
+      }
+      .about-badge img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .about-above-label {
+        font-size: 10px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: block;
+        margin-bottom: 14px;
+      }
+
+      /* ── SPACES SLIDER ── */
+      #spaces {
+        background: var(--black);
+      }
+      .spaces-hd {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      .spaces-hd .sec-div {
+        margin: 0 auto 28px;
+      }
+
+      .sp-slider-wrap {
+        position: relative;
+        overflow: hidden;
+      }
+      .sp-track {
+        display: flex;
+        transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .sp-slide {
+        min-width: 33.333%;
+        padding: 0 2px;
+        position: relative;
+        cursor: none;
+      }
+      .sp-slide img {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s;
+      }
+      .sp-slide:hover img {
+        transform: scale(1.04);
+      }
+      .sp-ov {
+        position: absolute;
+        inset: 2px 2px 0;
+        background: linear-gradient(
+          to top,
+          rgba(10, 10, 10, 0.88) 0%,
+          transparent 55%
+        );
+        transition: background 0.4s;
+      }
+      .sp-slide:hover .sp-ov {
+        background: linear-gradient(
+          to top,
+          rgba(10, 10, 10, 0.95) 0%,
+          rgba(10, 10, 10, 0.2) 100%
+        );
+      }
+      .sp-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 28px;
+      }
+      .sp-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 24px;
+        color: var(--white);
+      }
+      .sp-desc {
+        font-size: 12px;
+        color: rgba(245, 240, 232, 0.55);
+        margin-top: 8px;
+        line-height: 1.6;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: all 0.35s;
+      }
+      .sp-slide:hover .sp-desc {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .sp-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(10, 10, 10, 0.65);
+        border: 1px solid rgba(201, 168, 76, 0.3);
+        color: var(--gold);
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: none;
+        font-size: 18px;
+        z-index: 10;
+        transition: all 0.3s;
+      }
+      .sp-btn:hover {
+        background: var(--gold);
+        color: var(--black);
+      }
+      .sp-btn.prev {
+        left: 20px;
+      }
+      .sp-btn.next {
+        right: 20px;
+      }
+      .sp-dots {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 20px;
+      }
+      .sp-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(201, 168, 76, 0.3);
+        cursor: none;
+        transition: all 0.3s;
+      }
+      .sp-dot.active {
+        background: var(--gold);
+        width: 20px;
+        border-radius: 3px;
+      }
+
+      #menu {
+        background: var(--dark);
+        padding: 120px 0;
+      }
+      .menu-inner {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        min-height: 600px;
+      }
+      /* Sol panel — kateqoriyalar */
+      .menu-cats {
+        border-right: 1px solid rgba(201, 168, 76, 0.12);
+        padding: 60px 0 60px 60px;
+        position: sticky;
+        top: 80px;
+        align-self: start;
+      }
+      .menu-cats-title {
+        font-size: 9px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: block;
+        margin-bottom: 40px;
+      }
+      .menu-cat-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        color: rgba(245, 240, 232, 0.35);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 20px;
+        font-weight: 300;
+        letter-spacing: 1px;
+        padding: 10px 0;
+        cursor: none;
+        transition: color 0.3s;
+        line-height: 1.2;
+        position: relative;
+      }
+      .menu-cat-btn::before {
+        content: "";
+        position: absolute;
+        left: -24px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 1px;
+        background: var(--gold);
+        transition: width 0.3s;
+      }
+      .menu-cat-btn:hover {
+        color: rgba(245, 240, 232, 0.7);
+      }
+      .menu-cat-btn.active {
+        color: var(--white);
+      }
+      .menu-cat-btn.active::before {
+        width: 16px;
+      }
+
+      /* Sağ panel — yeməklər */
+      .menu-content {
+        padding: 60px 60px 60px 70px;
+      }
+      .menu-panel {
+        display: none;
+      }
+      .menu-panel.active {
+        display: block;
+      }
+
+      .menu-panel-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(36px, 5vw, 60px);
+        font-weight: 300;
+        color: var(--white);
+        margin-bottom: 8px;
+        line-height: 1;
+      }
+      .menu-panel-sub {
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 48px;
+        display: block;
+      }
+
+      /* Alt kateqori başlığı */
+      .menu-subcat {
+        font-size: 9px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(201, 168, 76, 0.6);
+        display: block;
+        margin: 36px 0 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+      }
+      .menu-subcat:first-child {
+        margin-top: 0;
+      }
+
+      /* Yemək sətiri */
+      .menu-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 20px;
+        padding: 13px 0;
+        border-bottom: 1px solid rgba(245, 240, 232, 0.05);
+        transition: all 0.25s;
+        cursor: none;
+      }
+      .menu-row:hover {
+        padding-left: 8px;
+        border-bottom-color: rgba(201, 168, 76, 0.15);
+      }
+      .menu-row:last-child {
+        border-bottom: none;
+      }
+      .menu-row-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 18px;
+        color: rgba(245, 240, 232, 0.8);
+        font-weight: 400;
+        transition: color 0.25s;
+        line-height: 1.3;
+      }
+      .menu-row:hover .menu-row-name {
+        color: var(--white);
+      }
+      .menu-row-dots {
+        flex: 1;
+        height: 1px;
+        background: repeating-linear-gradient(
+          to right,
+          rgba(201, 168, 76, 0.2) 0,
+          rgba(201, 168, 76, 0.2) 3px,
+          transparent 3px,
+          transparent 8px
+        );
+        margin: 0 12px;
+        align-self: center;
+        min-width: 20px;
+      }
+      .menu-row-price {
+        font-size: 13px;
+        color: var(--gold);
+        white-space: nowrap;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .menu-inner {
+          grid-template-columns: 200px 1fr;
+        }
+        .menu-cats {
+          padding: 40px 0 40px 28px;
+        }
+        .menu-content {
+          padding: 40px 28px;
+        }
+      }
+      @media (max-width: 768px) {
+        #menu {
+          padding: 68px 0;
+        }
+        .menu-inner {
+          grid-template-columns: 1fr;
+        }
+        .menu-cats {
+          border-right: none;
+          border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+          padding: 0 18px 28px;
+          position: static;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+          align-items: center;
+        }
+        .menu-cats-title {
+          width: 100%;
+          margin-bottom: 12px;
+        }
+        .menu-cat-btn {
+          font-size: 14px;
+          padding: 6px 14px;
+          border: 1px solid rgba(201, 168, 76, 0.2);
+          width: auto;
+        }
+        .menu-cat-btn.active {
+          border-color: var(--gold);
+          color: var(--gold);
+        }
+        .menu-cat-btn::before {
+          display: none;
+        }
+        .menu-content {
+          padding: 32px 18px;
+        }
+      }
+
+      /* ── GALLERY ── */
+      #gallery {
+        background: var(--black);
+        padding: 120px 0;
+      }
+      .gallery-hd {
+        text-align: center;
+        margin-bottom: 56px;
+        padding: 0 60px;
+      }
+      .gallery-hd .sec-div {
+        margin: 0 auto 28px;
+      }
+
+      /* Image slider */
+      .img-slider-wrap {
+        position: relative;
+        overflow: hidden;
+      }
+      .img-track {
+        display: flex;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .img-slide {
+        min-width: 33.333%;
+        padding: 0 2px;
+        position: relative;
+        cursor: none;
+      }
+      .img-slide img {
+        width: 100%;
+        height: 360px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s;
+      }
+      .img-slide:hover img {
+        transform: scale(1.05);
+      }
+      .img-slide-ov {
+        position: absolute;
+        inset: 2px 2px 0;
+        background: rgba(10, 10, 10, 0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s;
+      }
+      .img-slide:hover .img-slide-ov {
+        background: rgba(10, 10, 10, 0.3);
+      }
+      .zoom-ic {
+        width: 44px;
+        height: 44px;
+        border: 1px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0.7);
+        transition: all 0.3s;
+      }
+      .img-slide:hover .zoom-ic {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .zoom-ic svg {
+        width: 16px;
+        height: 16px;
+        stroke: white;
+        fill: none;
+        stroke-width: 2;
+      }
+      .gal-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(10, 10, 10, 0.7);
+        border: 1px solid rgba(201, 168, 76, 0.3);
+        color: var(--gold);
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: none;
+        font-size: 18px;
+        z-index: 10;
+        transition: all 0.3s;
+      }
+      .gal-btn:hover {
+        background: var(--gold);
+        color: var(--black);
+      }
+      .gal-btn.prev {
+        left: 20px;
+      }
+      .gal-btn.next {
+        right: 20px;
+      }
+      .gal-dots {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 18px;
+        padding: 0 60px;
+      }
+      .g-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(201, 168, 76, 0.3);
+        cursor: none;
+        transition: all 0.3s;
+      }
+      .g-dot.active {
+        background: var(--gold);
+        width: 20px;
+        border-radius: 3px;
+      }
+
+      /* Videos */
+      .vids-wrap {
+        display: flex;
+        gap: 3px;
+        margin-top: 3px;
+      }
+      .vid-item {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        cursor: none;
+      }
+      .vid-item video {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.5s;
+      }
+      .vid-item:hover video {
+        transform: scale(1.04);
+      }
+      .vid-ov {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .play-ic {
+        width: 48px;
+        height: 48px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .vid-item:hover .play-ic {
+        border-color: var(--gold);
+        background: rgba(201, 168, 76, 0.15);
+      }
+      .play-ic svg {
+        width: 14px;
+        height: 14px;
+        fill: white;
+        margin-left: 3px;
+      }
+
+      /* ── LIGHTBOX ── */
+      .lb {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.96);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .lb.open {
+        display: flex;
+      }
+      .lb img,
+      .lb video {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+      }
+      .lb-close {
+        position: absolute;
+        top: 28px;
+        right: 36px;
+        background: none;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-size: 18px;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: none;
+        transition: all 0.3s;
+      }
+      .lb-close:hover {
+        background: var(--gold);
+        color: var(--black);
+      }
+
+      /* ── RESERVATION ── */
+      #reservation {
+        background: var(--dark);
+      }
+      .res-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 90px;
+        align-items: start;
+      }
+      .res-info .sec-div {
+        margin-bottom: 28px;
+      }
+      .info-items {
+        margin-top: 44px;
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+      }
+      .i-item {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+      }
+      .i-ic {
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(201, 168, 76, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .i-ic svg {
+        width: 15px;
+        height: 15px;
+        stroke: var(--gold);
+        fill: none;
+        stroke-width: 1.5;
+      }
+      .i-lbl {
+        font-size: 9px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--gold);
+        display: block;
+        margin-bottom: 5px;
+      }
+      .i-val {
+        font-size: 13px;
+        color: rgba(245, 240, 232, 0.65);
+        line-height: 1.7;
+      }
+      .res-form {
+        background: var(--dark2);
+        padding: 46px;
+        border: 1px solid rgba(201, 168, 76, 0.12);
+      }
+      .f-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 30px;
+        color: var(--white);
+        margin-bottom: 6px;
+      }
+      .f-sub {
+        font-size: 11px;
+        color: var(--gray);
+        letter-spacing: 1px;
+        margin-bottom: 32px;
+      }
+      .f-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+      .f-grp {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 18px;
+      }
+      .f-grp label {
+        font-size: 9px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+      .f-grp input,
+      .f-grp select,
+      .f-grp textarea {
+        background: var(--dark3);
+        border: 1px solid rgba(201, 168, 76, 0.18);
+        color: var(--white);
+        padding: 13px 16px;
+        font-size: 13px;
+        font-family: "Montserrat", sans-serif;
+        outline: none;
+        transition: border-color 0.3s;
+        cursor: none;
+        -webkit-appearance: none;
+      }
+      .f-grp input::placeholder,
+      .f-grp textarea::placeholder {
+        color: rgba(245, 240, 232, 0.25);
+      }
+      .f-grp input:focus,
+      .f-grp select:focus,
+      .f-grp textarea:focus {
+        border-color: var(--gold);
+      }
+      .f-grp select option {
+        background: var(--dark3);
+      }
+      .f-grp textarea {
+        resize: none;
+        height: 90px;
+      }
+      .f-grp input[type="date"],
+      .f-grp input[type="time"] {
+        color-scheme: dark;
+      }
+      .btn-sub {
+        width: 100%;
+        padding: 17px;
+        background: var(--gold);
+        border: none;
+        color: var(--black);
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-family: "Montserrat", sans-serif;
+        font-weight: 600;
+        cursor: none;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 4px;
+      }
+      .btn-sub:hover {
+        background: var(--gold-light);
+      }
+      .btn-sub svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        background: var(--dark);
+        padding: 52px 60px;
+        border-top: 1px solid rgba(201, 168, 76, 0.12);
+      }
+      .foot-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .foot-logo img {
+        height: 42px;
+        object-fit: contain;
+      }
+      .foot-copy {
+        font-size: 11px;
+        color: rgba(245, 240, 232, 0.35);
+        letter-spacing: 0.3px;
+        text-align: center;
+      }
+      .foot-copy a {
+        color: var(--gold);
+        text-decoration: none;
+      }
+      .foot-social {
+        display: flex;
+        gap: 12px;
+      }
+      .foot-social a {
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray);
+        text-decoration: none;
+        transition: all 0.3s;
+      }
+      .foot-social a:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .foot-social svg {
+        width: 15px;
+        height: 15px;
+        fill: currentColor;
+      }
+
+      /* ── REVEAL ── */
+      .rv {
+        opacity: 0;
+        transform: translateY(36px);
+        transition:
+          opacity 0.8s ease,
+          transform 0.8s ease;
+      }
+      .rv.on {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 1024px) {
+        nav {
+          padding: 18px 28px;
+        }
+        nav.scrolled {
+          padding: 14px 28px;
+        }
+        .sec {
+          padding: 80px 28px;
+        }
+        #about {
+          grid-template-columns: 1fr;
+          gap: 50px;
+        }
+        .about-imgs {
+          height: 380px;
+        }
+        .sp-slide {
+          min-width: 50%;
+        }
+        .img-slide {
+          min-width: 50%;
+        }
+        .res-inner {
+          grid-template-columns: 1fr;
+          gap: 50px;
+        }
+      }
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .sp-slide {
+          min-width: 100%;
+        }
+        .img-slide {
+          min-width: 100%;
+        }
+        .sec {
+          padding: 68px 18px;
+        }
+        .f-row {
+          grid-template-columns: 1fr;
+        }
+        .res-form {
+          padding: 28px 20px;
+        }
+        .foot-inner {
+          flex-direction: column;
+          text-align: center;
+        }
+        .vids-wrap {
+          flex-direction: column;
+        }
+        .gallery-hd {
+          padding: 0 18px;
+        }
+        #gallery {
+          padding: 80px 0;
+        }
+        .menu-tabs {
+          width: 100%;
+        }
+        footer {
+          padding: 40px 18px;
+        }
+        .hero-svg text {
+          font-size: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cur"></div>
+    <div id="cur2"></div>
+
+    <!-- LIGHTBOX -->
+    <div class="lb" id="lb">
+      <button class="lb-close" id="lbClose">✕</button>
+      <img id="lbImg" src="" alt="" style="display: none" />
+      <video id="lbVid" controls style="display: none"></video>
+    </div>
+
+    <!-- NAV -->
+    <nav id="nav">
+      <div class="nav-logo">
+        <a href="#" onclick="location.reload()"
+          ><img src="melan-logo.jpg" alt="Melan Lounge"
+        /></a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#about" data-k="nav_about">Haqqımızda</a></li>
+        <li><a href="#spaces" data-k="nav_spaces">Məkanlar</a></li>
+        <li><a href="#menu" data-k="nav_menu">Menyu</a></li>
+        <li><a href="#gallery" data-k="nav_gallery">Qalereya</a></li>
+        <li><a href="#reservation" data-k="nav_res">Rezervasiya</a></li>
+      </ul>
+      <div class="lang-sw">
+        <button class="lang-btn active" onclick="setLang('az')">AZ</button>
+        <button class="lang-btn" onclick="setLang('ru')">RU</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+      <div class="hamburger" id="ham">
+        <span></span><span></span><span></span>
+      </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mob-menu" id="mobMenu">
+      <a href="#about" onclick="closeMob()" data-k="nav_about">Haqqımızda</a>
+      <a href="#spaces" onclick="closeMob()" data-k="nav_spaces">Məkanlar</a>
+      <a href="#menu" onclick="closeMob()" data-k="nav_menu">Menyu</a>
+      <a href="#gallery" onclick="closeMob()" data-k="nav_gallery">Qalereya</a>
+      <a href="#reservation" onclick="closeMob()" data-k="nav_res"
+        >Rezervasiya</a
+      >
+      <div class="lang-sw" style="margin-top: 16px">
+        <button class="lang-btn active" onclick="setLang('az')">AZ</button>
+        <button class="lang-btn" onclick="setLang('ru')">RU</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-bg" id="heroBg"></div>
+      <div class="hero-ov"></div>
+      <div class="hero-content">
+        <svg
+          class="hero-svg"
+          id="heroSvg"
+          viewBox="0 0 1100 420"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <text x="50%" y="360" text-anchor="middle" dominant-baseline="auto">
+            MELAN
+          </text>
+        </svg>
+        <p class="hero-sub" data-k="hero_sub">Lounge — Sumqayıt</p>
+        <div class="hero-line"></div>
+        <p class="hero-tag" data-k="hero_tag">
+          Unikal atmosfer · Premium nargilə · Ləzzətli mətbəx
+        </p>
+      </div>
+      <div
+        class="hero-scroll"
+        onclick="
+          document
+            .getElementById('about')
+            .scrollIntoView({ behavior: 'smooth' })
+        "
+      >
+        <div class="scroll-line"></div>
+        <span data-k="scroll">Kəşf et</span>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="sec rv">
+      <div class="about-imgs">
+        <img src="hall-2.jpg" alt="Melan Lounge zal" class="about-img-a" />
+        <img src="cabin-4.jpg" alt="Melan Lounge kabin" class="about-img-b" />
+        <div class="about-badge">
+          <img src="melan-logo.jpg" alt="Melan Lounge Logo" />
+        </div>
+      </div>
+      <div>
+        <span class="sec-label" data-k="about_lbl">Haqqımızda</span>
+        <h2 class="sec-title" data-k="about_title">
+          Bir lounge,<br />sonsuz hiss.
+        </h2>
+        <div class="sec-div"></div>
+        <p class="sec-text" data-k="about_txt">
+          Melan Lounge — Sumqayıtın ən unikal istirahət məkanlarından biridir.
+          Hər kabini özünəməxsus divar sənəti ilə bəzədilmiş, premium nargilə
+          xidməti, zəngin mətbəx və canlı atmosferi ilə sizi adi gündən tamamilə
+          ayırır. Dostlarla, ailə ilə, yaxud sevdiyinizlə — hər an burada
+          xüsusidir.
+        </p>
+        <a href="#reservation" class="cta-link"
+          ><span data-k="book_now">Rezervasiya et</span> →</a
+        >
+      </div>
+    </section>
+
+    <!-- SPACES -->
+    <section id="spaces" class="sec">
+      <div class="spaces-hd rv">
+        <span class="sec-label" data-k="spaces_lbl">Məkanlarımız</span>
+        <h2 class="sec-title" data-k="spaces_title">
+          Hər küncdə<br />fərqli dünya
+        </h2>
+        <div class="sec-div"></div>
+      </div>
+      <div class="sp-slider-wrap rv">
+        <button class="sp-btn prev" onclick="spSlide(-1)">&#8592;</button>
+        <div class="sp-track" id="spTrack">
+          <!-- 6 space images — replace src with your preferred images -->
+          <div class="sp-slide">
+            <img src="cabin-1.jpg" alt="Məkan 1" />
+            <div class="sp-ov"></div>
+          </div>
+          <div class="sp-slide">
+            <img src="cabin-2.jpg" alt="Məkan 2" />
+            <div class="sp-ov"></div>
+          </div>
+          <div class="sp-slide">
+            <img src="cabin-3.jpg" alt="Məkan 3" />
+            <div class="sp-ov"></div>
+          </div>
+          <div class="sp-slide">
+            <img src="cabin-4.jpg" alt="Məkan 4" />
+            <div class="sp-ov"></div>
+          </div>
+          <div class="sp-slide">
+            <img src="hall-1.jpg" alt="Məkan 5" />
+            <div class="sp-ov"></div>
+          </div>
+          <div class="sp-slide">
+            <img src="hall-2.jpg" alt="Məkan 6" />
+            <div class="sp-ov"></div>
+          </div>
+        </div>
+        <button class="sp-btn next" onclick="spSlide(1)">&#8594;</button>
+      </div>
+      <div class="sp-dots" id="spDots"></div>
+    </section>
+
+    <!-- MENU -->
+    <section id="menu">
+      <div class="menu-inner">
+        <!-- SOL: KATEQORİYALAR -->
+        <div class="menu-cats">
+          <span class="menu-cats-title" data-k="menu_lbl">Menyumuz</span>
+          <button
+            class="menu-cat-btn active"
+            onclick="menuTab(this, 'mc')"
+            data-k="t_cold"
+          >
+            Soyuq Qəlyanaltılar
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'ms')"
+            data-k="t_sal"
+          >
+            Salatlar
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'mso')"
+            data-k="t_soup"
+          >
+            Şorbalar
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'mh')"
+            data-k="t_hot"
+          >
+            İsti Yeməklər
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'msac')"
+            data-k="t_sac"
+          >
+            Sac Yeməkləri
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'mff')"
+            data-k="t_ff"
+          >
+            Fast Food
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'mpz')"
+            data-k="t_pizza"
+          >
+            Pizzalar
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'mg')"
+            data-k="t_garn"
+          >
+            Qarnirlar
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'mdr')"
+            data-k="t_drink"
+          >
+            İçkilər
+          </button>
+          <button
+            class="menu-cat-btn"
+            onclick="menuTab(this, 'mte')"
+            data-k="t_tea"
+          >
+            Çay Seti
+          </button>
+        </div>
+
+        <!-- SAĞ: MƏZMUN -->
+        <div class="menu-content">
+          <!-- SOYUQ QƏLYANALTIlar -->
+          <div id="mc" class="menu-panel active">
+            <h2 class="menu-panel-title" data-k="t_cold">
+              Soyuq Qəlyanaltılar
+            </h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Tərəvəz assorti</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Pendir assorti</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">5 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Zeytun çeşidləri</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Turşu çeşidləri</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Acika</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Süzma</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">2 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Blincik ət ilə</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">1 ₼</span>
+            </div>
+          </div>
+
+          <!-- SALATLAR -->
+          <div id="ms" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_sal">Salatlar</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Sezar salatı toyuq ilə</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">8 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Sezar salatı krevetka</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">10 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Tuna salatı</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">10 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Çoban salatı</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Melon salatı</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Yunan salatı</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">5 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Toyuq salatı</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">5 ₼</span>
+            </div>
+          </div>
+
+          <!-- ŞORBALAR -->
+          <div id="mso" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_soup">Şorbalar</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Düşbərə</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Mərc şorbası</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Göbələkli krem şorbası</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Toyuq şorbası</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Tomat şorbası</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+          </div>
+
+          <!-- İSTİ YEMƏKlər -->
+          <div id="mh" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_hot">İsti Yeməklər</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Toyuq julyen</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">7 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Can əti julyen</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">8 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Toyuq langet</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">8 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Qaymaqlu toyuq</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">10 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Can əti langet</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">10 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Toyuq şnitzel</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">10 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Toyuq monastır</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Can əti monastır</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Faxitos toyuq</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Faxitos can əti</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Beefstroganoff</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Özəl sousda krevetka</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">14 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Tabaka</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">14 ₼</span>
+            </div>
+          </div>
+
+          <!-- SAC YEMƏKLƏRİ -->
+          <div id="msac" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_sac">Sac Yeməkləri</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Çolpa sac</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">17 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Can əti sac</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">23 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Toyuqlu sac</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">20 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Qarışıq sac</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">23 ₼</span>
+            </div>
+          </div>
+
+          <!-- FAST FOOD -->
+          <div id="mff" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_ff">Fast Food</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Pendir çubuqları</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Nuggets</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Acılı toyuq qanadları</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">7 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Beef burger</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">8 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Cheese burger</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">9 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Chicken burger</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">10 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Club sandwich</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">7 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Şaurma</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+          </div>
+
+          <!-- PIZZALAR -->
+          <div id="mpz" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_pizza">Pizzalar</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Marqarita</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">8 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Kids pizza</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">10 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Dörd fəsil pizza</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Sezar pizza</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">12 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Melan pizza</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">14 ₼</span>
+            </div>
+          </div>
+
+          <!-- QARNİRLAR -->
+          <div id="mg" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_garn">Qarnirlar</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Düyü</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">French fries</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Ev sayağı</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Püre</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+          </div>
+
+          <!-- İÇKİLƏR -->
+          <div id="mdr" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_drink">İçkilər</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+
+            <span class="menu-subcat" data-k="cat_bsnack">Pivə Məzələri</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Saçaqlı pendir sadə</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Saçaqlı pendir qızardılmış</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Bildirçin</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Boğaz</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Düşbərə</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Chipsi</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Tum</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">2 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Pətənək</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+
+            <span class="menu-subcat" data-k="cat_beer">Pivələr</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Efes zero</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Efes draft</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">5 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Miller</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Corona</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Xırdalan (süzülmüş)</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+
+            <span class="menu-subcat" data-k="cat_whisky">Viskılər</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Jameson</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">5 / 80 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Chivas 12</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">7 / 120 ₼</span>
+            </div>
+
+            <span class="menu-subcat" data-k="cat_tequila">Tekilalar</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Sierra silver</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">5 / 80 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Sierra gold</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 / 100 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Omega blanco</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">7 / 120 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Omega gold</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">8 / 130 ₼</span>
+            </div>
+
+            <span class="menu-subcat" data-k="cat_soft"
+              >Alkoqolsuz İçkilər</span
+            >
+            <div class="menu-row">
+              <span class="menu-row-name">Cola / Fanta / Sprite (0.33)</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Ice tea (0.33)</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">3 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Ev sayağı ice tea</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Red bull</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Badamlı</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Meyva şirəsi</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">4 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Ayran</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">1 ₼</span>
+            </div>
+
+            <span class="menu-subcat" data-k="cat_fresh">Freşlər</span>
+            <div class="menu-row">
+              <span class="menu-row-name">Portağal</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Qreyfrut</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">6 ₼</span>
+            </div>
+            <div class="menu-row">
+              <span class="menu-row-name">Nar</span
+              ><span class="menu-row-dots"></span
+              ><span class="menu-row-price">8 ₼</span>
+            </div>
+          </div>
+
+          <!-- ÇAY SETİ -->
+          <div id="mte" class="menu-panel">
+            <h2 class="menu-panel-title" data-k="t_tea">Çay Seti</h2>
+            <span class="menu-panel-sub" data-k="menu_lbl">Menyumuz</span>
+            <div class="menu-row">
+              <span class="menu-row-name" data-k="tea_item"
+                >Çay seti (çay + şirniyyat + qoz-fındıq)</span
+              >
+              <span class="menu-row-dots"></span>
+              <span class="menu-row-price" data-k="tea_price"
+                >Qiymət üçün əlaqə</span
+              >
+            </div>
+          </div>
+        </div>
+        <!-- /menu-content -->
+      </div>
+      <!-- /menu-inner -->
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery">
+      <div class="gallery-hd rv">
+        <span class="sec-label" data-k="gal_lbl">Qalereya</span>
+        <h2 class="sec-title" data-k="gal_title">Melan'ı hiss edin</h2>
+        <div class="sec-div"></div>
+      </div>
+
+      <!-- IMAGE SLIDER -->
+      <div class="img-slider-wrap rv">
+        <button class="gal-btn prev" onclick="galSlide(-1)">&#8592;</button>
+        <div class="img-track" id="imgTrack">
+          <div class="img-slide" onclick="openLb('img', 'atmosfer-1.jpg')">
+            <img src="atmosfer-1.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'atmosfer-2.jpg')">
+            <img src="atmosfer-2.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'atmosfer-3.jpg')">
+            <img src="atmosfer-3.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'meal-1.jpg')">
+            <img src="meal-1.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'meal-2.jpg')">
+            <img src="meal-2.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'meal-3.jpg')">
+            <img src="meal-3.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'meal-4.jpg')">
+            <img src="meal-4.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'meal-5.jpg')">
+            <img src="meal-5.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'meal-6.jpg')">
+            <img src="meal-6.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'meal-7.jpg')">
+            <img src="meal-7.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-1.jpg')">
+            <img src="drink-1.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-2.jpg')">
+            <img src="drink-2.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-3.jpg')">
+            <img src="drink-3.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-4.jpg')">
+            <img src="drink-4.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-5.jpg')">
+            <img src="drink-5.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-6.jpg')">
+            <img src="drink-6.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-7.jpg')">
+            <img src="drink-7.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'drink-8.jpg')">
+            <img src="drink-8.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="img-slide" onclick="openLb('img', 'tea-set.jpg')">
+            <img src="tea-set.jpg" alt="" />
+            <div class="img-slide-ov">
+              <div class="zoom-ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="gal-btn next" onclick="galSlide(1)">&#8594;</button>
+      </div>
+      <div class="gal-dots" id="galDots"></div>
+
+      <!-- VIDEOS -->
+      <div class="vids-wrap rv" style="margin-top: 3px">
+        <div class="vid-item">
+          <video
+            src="https://res.cloudinary.com/daboan94r/video/upload/v1776772237/video-1_bu1by4.mp4"
+            muted
+            loop
+            autoplay
+            playsinline
+          ></video>
+          <div class="vid-ov">
+            <div class="play-ic">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" /></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-item">
+          <video
+            src="https://res.cloudinary.com/daboan94r/video/upload/v1776772237/video-2_r8liny.mp4"
+            muted
+            loop
+            autoplay
+            playsinline
+          ></video>
+          <div class="vid-ov">
+            <div class="play-ic">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" /></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-item">
+          <video
+            src="https://res.cloudinary.com/daboan94r/video/upload/v1776772238/video-3_hegw6b.mp4"
+            muted
+            loop
+            autoplay
+            playsinline
+          ></video>
+          <div class="vid-ov">
+            <div class="play-ic">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" /></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-item">
+          <video
+            src="https://res.cloudinary.com/daboan94r/video/upload/v1776772238/video-4_xbvlub.mp4"
+            muted
+            loop
+            autoplay
+            playsinline
+          ></video>
+          <div class="vid-ov">
+            <div class="play-ic">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" /></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-item">
+          <video
+            src="https://res.cloudinary.com/daboan94r/video/upload/v1776772238/video-5_ccwlfr.mp4"
+            muted
+            loop
+            autoplay
+            playsinline
+          ></video>
+          <div class="vid-ov">
+            <div class="play-ic">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" /></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-item">
+          <video
+            src="https://res.cloudinary.com/daboan94r/video/upload/v1776772492/place-1_xdabiy.mp4"
+            muted
+            loop
+            autoplay
+            playsinline
+          ></video>
+          <div class="vid-ov">
+            <div class="play-ic">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" /></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-item">
+          <video
+            src="https://res.cloudinary.com/daboan94r/video/upload/v1776772203/place-2_vsnql3.mp4"
+            muted
+            loop
+            autoplay
+            playsinline
+          ></video>
+          <div class="vid-ov">
+            <div class="play-ic">
+              <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" /></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESERVATION -->
+    <section id="reservation" class="sec">
+      <div class="res-inner">
+        <div class="res-info rv">
+          <span class="sec-label" data-k="res_lbl">Rezervasiya</span>
+          <h2 class="sec-title" data-k="res_title">Yerinizi<br />ayırtın</h2>
+          <div class="sec-div"></div>
+          <p class="sec-text" data-k="res_txt">
+            Xüsusi bir axşam planlaşdırırsınız? Formu doldurun, biz sizinlə
+            əlaqə saxlayaq. Yaxud birbaşa WhatsApp vasitəsilə yazın.
+          </p>
+          <div class="info-items">
+            <div class="i-item">
+              <div class="i-ic">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <span class="i-lbl" data-k="lbl_addr">Ünvan</span>
+                <p class="i-val">
+                  Sumqayıt şəhəri, Nizami küçəsi 5,<br />Birləşmiş məhəllə
+                </p>
+              </div>
+            </div>
+            <div class="i-item">
+              <div class="i-ic">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <span class="i-lbl" data-k="lbl_phone">Telefon</span>
+                <p class="i-val">+994 55 802 03 03</p>
+              </div>
+            </div>
+            <div class="i-item">
+              <div class="i-ic">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div>
+                <span class="i-lbl" data-k="lbl_hours">İş saatları</span>
+                <p class="i-val" data-k="hours_val">Hər gün: 13:00 – 01:00</p>
+              </div>
+            </div>
+            <div class="i-item">
+              <div class="i-ic">
+                <svg viewBox="0 0 24 24" fill="var(--gold)" stroke="none">
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
+                  />
+                  <path
+                    d="M12 0C5.373 0 0 5.373 0 12c0 2.125.549 4.122 1.515 5.862L.057 23.571a.5.5 0 00.61.61l5.709-1.458A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.032-1.374l-.36-.214-3.733.954.969-3.735-.234-.374A9.854 9.854 0 012.118 12C2.118 6.527 6.527 2.118 12 2.118S21.882 6.527 21.882 12 17.473 21.882 12 21.882z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <span class="i-lbl">WhatsApp</span>
+                <p class="i-val">
+                  <a
+                    href="https://wa.me/994558020303"
+                    target="_blank"
+                    style="color: var(--gold); text-decoration: none"
+                    >+994 55 802 03 03</a
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="res-form rv">
+          <h3 class="f-title" data-k="f_title">Rezervasiya</h3>
+          <p class="f-sub" data-k="f_sub">
+            Formu doldurun, WhatsApp-a göndərilsin
+          </p>
+          <div class="f-row">
+            <div class="f-grp">
+              <label data-k="f_name">Adınız</label>
+              <input
+                type="text"
+                id="fn"
+                data-ph="ph_name"
+                placeholder="Ad Soyad"
+              />
+            </div>
+            <div class="f-grp">
+              <label data-k="f_phone">Telefon</label>
+              <input
+                type="tel"
+                id="fp"
+                data-ph="ph_phone"
+                placeholder="+994 XX XXX XX XX"
+              />
+            </div>
+          </div>
+          <div class="f-row">
+            <div class="f-grp">
+              <label data-k="f_date">Tarix</label>
+              <input type="date" id="fd" />
+            </div>
+            <div class="f-grp">
+              <label data-k="f_time">Saat</label>
+              <input type="time" id="ft" />
+            </div>
+          </div>
+          <div class="f-grp">
+            <label data-k="f_guests">Nəfər sayı</label>
+            <select id="fg"></select>
+          </div>
+          <div class="f-grp">
+            <label data-k="f_note">Qeyd</label>
+            <textarea
+              id="fno"
+              data-ph="ph_note"
+              placeholder="Xüsusi istək, kabin üstünlüyü..."
+            ></textarea>
+          </div>
+          <button class="btn-sub" onclick="sendWA()">
+            <svg viewBox="0 0 24 24" fill="black">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
+              />
+              <path
+                d="M12 0C5.373 0 0 5.373 0 12c0 2.125.549 4.122 1.515 5.862L.057 23.571a.5.5 0 00.61.61l5.709-1.458A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.032-1.374l-.36-.214-3.733.954.969-3.735-.234-.374A9.854 9.854 0 012.118 12C2.118 6.527 6.527 2.118 12 2.118S21.882 6.527 21.882 12 17.473 21.882 12 21.882z"
+              />
+            </svg>
+            <span data-k="f_send">WhatsApp ilə göndər</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="foot-inner">
+        <div class="foot-logo">
+          <img src="melan-logo.jpg" alt="Melan Lounge" />
+        </div>
+        <p class="foot-copy">
+          © 2026 Melan Lounge. All rights reserved. | Developed by
+          <a href="#">Elvin Eyvazov</a>
+        </p>
+        <div class="foot-social">
+          <a
+            href="https://www.instagram.com/melanlounge/"
+            target="_blank"
+            title="Instagram"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+              />
+            </svg>
+          </a>
+          <a href="https://wa.me/994558020303" target="_blank" title="WhatsApp">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
+              />
+              <path
+                d="M12 0C5.373 0 0 5.373 0 12c0 2.125.549 4.122 1.515 5.862L.057 23.571a.5.5 0 00.61.61l5.709-1.458A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.87 9.87 0 01-5.032-1.374l-.36-.214-3.733.954.969-3.735-.234-.374A9.854 9.854 0 012.118 12C2.118 6.527 6.527 2.118 12 2.118S21.882 6.527 21.882 12 17.473 21.882 12 21.882z"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // ── CURSOR ──
+      const cur = document.getElementById("cur"),
+        cur2 = document.getElementById("cur2");
+      let mx = 0,
+        my = 0,
+        cx = 0,
+        cy = 0;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        cur.style.left = mx + "px";
+        cur.style.top = my + "px";
+      });
+      (function a() {
+        cx += (mx - cx) * 0.13;
+        cy += (my - cy) * 0.13;
+        cur2.style.left = cx + "px";
+        cur2.style.top = cy + "px";
+        requestAnimationFrame(a);
+      })();
+      document
+        .querySelectorAll(
+          "a,button,input,select,textarea,.img-slide,.sp-slide,.m-item,.vid-item",
+        )
+        .forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            cur2.style.width = "48px";
+            cur2.style.height = "48px";
+            cur2.style.opacity = ".4";
+          });
+          el.addEventListener("mouseleave", () => {
+            cur2.style.width = "32px";
+            cur2.style.height = "32px";
+            cur2.style.opacity = ".7";
+          });
+        });
+
+      // ── HERO: bg reveals after 8s, text fades ──
+      setTimeout(() => {
+        document.getElementById("heroBg").classList.add("reveal");
+        document.getElementById("heroSvg").classList.add("done");
+      }, 3000);
+
+      // ── NAV SCROLL ──
+      window.addEventListener("scroll", () =>
+        document
+          .getElementById("nav")
+          .classList.toggle("scrolled", scrollY > 60),
+      );
+
+      // ── HAMBURGER ──
+      const ham = document.getElementById("ham"),
+        mob = document.getElementById("mobMenu");
+      ham.addEventListener("click", () => {
+        if (mob.style.display === "flex") {
+          mob.style.opacity = "0";
+          setTimeout(() => (mob.style.display = "none"), 400);
+        } else {
+          mob.style.display = "flex";
+          setTimeout(() => (mob.style.opacity = "1"), 10);
+        }
+      });
+      function closeMob() {
+        mob.style.opacity = "0";
+        setTimeout(() => (mob.style.display = "none"), 400);
+      }
+
+      // ── MENU TABS ──
+      function menuTab(btn, id) {
+        document
+          .querySelectorAll(".menu-panel")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".menu-cat-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        btn.classList.add("active");
+      }
+
+      // ── SPACES SLIDER ──
+      const spTrack = document.getElementById("spTrack");
+      const spSlides = spTrack.querySelectorAll(".sp-slide");
+      let spCur = 0;
+      function spGetPer() {
+        return window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3;
+      }
+      function buildSpDots() {
+        const dc = document.getElementById("spDots");
+        dc.innerHTML = "";
+        const pages = Math.ceil(spSlides.length / spGetPer());
+        for (let i = 0; i < pages; i++) {
+          const d = document.createElement("div");
+          d.className = "sp-dot" + (i === 0 ? " active" : "");
+          d.onclick = () => goSp(i * spGetPer());
+          dc.appendChild(d);
+        }
+      }
+      function goSp(idx) {
+        const per = spGetPer();
+        spCur = Math.max(0, Math.min(idx, spSlides.length - per));
+        spTrack.style.transform = `translateX(-${spCur * spSlides[0].offsetWidth}px)`;
+        document
+          .querySelectorAll(".sp-dot")
+          .forEach((d, i) =>
+            d.classList.toggle("active", i === Math.floor(spCur / per)),
+          );
+      }
+      function spSlide(dir) {
+        goSp(spCur + dir * spGetPer());
+      }
+      window.addEventListener("resize", () => {
+        buildSpDots();
+        goSp(0);
+      });
+      buildSpDots();
+
+      // ── GALLERY SLIDER ──
+      const imgTrack = document.getElementById("imgTrack");
+      const imgSlides = imgTrack.querySelectorAll(".img-slide");
+      let galCur = 0;
+      function galGetPer() {
+        return window.innerWidth <= 768 ? 1 : window.innerWidth <= 1024 ? 2 : 3;
+      }
+      function buildGalDots() {
+        const dc = document.getElementById("galDots");
+        dc.innerHTML = "";
+        const pages = Math.ceil(imgSlides.length / galGetPer());
+        for (let i = 0; i < pages; i++) {
+          const d = document.createElement("div");
+          d.className = "g-dot" + (i === 0 ? " active" : "");
+          d.onclick = () => goGal(i * galGetPer());
+          dc.appendChild(d);
+        }
+      }
+      function goGal(idx) {
+        const per = galGetPer();
+        galCur = Math.max(0, Math.min(idx, imgSlides.length - per));
+        imgTrack.style.transform = `translateX(-${galCur * imgSlides[0].offsetWidth}px)`;
+        document
+          .querySelectorAll(".g-dot")
+          .forEach((d, i) =>
+            d.classList.toggle("active", i === Math.floor(galCur / per)),
+          );
+      }
+      function galSlide(dir) {
+        goGal(galCur + dir * galGetPer());
+      }
+      window.addEventListener("resize", () => {
+        buildGalDots();
+        goGal(0);
+      });
+      buildGalDots();
+
+      // ── VIDEO HOVER SOUND ──
+      document.querySelectorAll(".vid-item").forEach((item) => {
+        const v = item.querySelector("video");
+        item.addEventListener("mouseenter", () => {
+          v.muted = false;
+          v.volume = 0.5;
+        });
+        item.addEventListener("mouseleave", () => {
+          v.muted = true;
+        });
+      });
+
+      // ── LIGHTBOX ──
+      function openLb(type, src) {
+        const lb = document.getElementById("lb"),
+          img = document.getElementById("lbImg"),
+          vid = document.getElementById("lbVid");
+        lb.classList.add("open");
+        if (type === "img") {
+          img.src = src;
+          img.style.display = "block";
+          vid.style.display = "none";
+          vid.pause();
+        } else {
+          vid.src = src;
+          vid.style.display = "block";
+          img.style.display = "none";
+          vid.play();
+        }
+      }
+      document.getElementById("lbClose").onclick = () => {
+        document.getElementById("lb").classList.remove("open");
+        document.getElementById("lbVid").pause();
+      };
+      document.getElementById("lb").addEventListener("click", function (e) {
+        if (e.target === this) {
+          this.classList.remove("open");
+          document.getElementById("lbVid").pause();
+        }
+      });
+
+      // ── WHATSAPP FORM ──
+      function sendWA() {
+        const n = document.getElementById("fn").value.trim(),
+          p = document.getElementById("fp").value.trim(),
+          d = document.getElementById("fd").value,
+          t = document.getElementById("ft").value,
+          g = document.getElementById("fg").value,
+          no = document.getElementById("fno").value.trim();
+        if (!n || !p || !d || !t) {
+          alert(langs[curLang].alert);
+          return;
+        }
+        const msg = `🍽 *Melan Lounge Rezervasiya*\n\n👤 ${n}\n📞 ${p}\n📅 ${d} — ${t}\n👥 ${g}\n📝 ${no || "—"}`;
+        window.open(
+          `https://wa.me/994558020303?text=${encodeURIComponent(msg)}`,
+          "_blank",
+        );
+      }
+
+      // ── SCROLL REVEAL ──
+      const obs = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("on");
+              obs.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.08 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => obs.observe(el));
+
+      // ── i18n ──
+      let curLang = "az";
+
+      // Guest options per language
+      const guestOpts = {
+        az: ["1 nəfər", "2 nəfər", "3 nəfər", "4 nəfər", "5 nəfər", "6+ nəfər"],
+        ru: [
+          "1 человек",
+          "2 человека",
+          "3 человека",
+          "4 человека",
+          "5 человек",
+          "6+ человек",
+        ],
+        en: [
+          "1 person",
+          "2 people",
+          "3 people",
+          "4 people",
+          "5 people",
+          "6+ people",
+        ],
+      };
+
+      function buildGuests(lang) {
+        const sel = document.getElementById("fg");
+        sel.innerHTML = "";
+        guestOpts[lang].forEach((o, i) => {
+          const opt = document.createElement("option");
+          opt.value = o;
+          opt.textContent = o;
+          sel.appendChild(opt);
+        });
+      }
+      buildGuests("az");
+
+      const langs = {
+        az: {
+          nav_about: "Haqqımızda",
+          nav_spaces: "Məkanlar",
+          nav_menu: "Menyu",
+          nav_gallery: "Qalereya",
+          nav_res: "Rezervasiya",
+          hero_sub: "Lounge — Sumqayıt",
+          hero_tag: "Unikal atmosfer · Premium nargilə · Ləzzətli mətbəx",
+          scroll: "Kəşf et",
+          about_lbl: "Haqqımızda",
+          about_title: "Bir lounge,\nsonsuz hiss.",
+          about_txt:
+            "Melan Lounge — Sumqayıtın ən unikal istirahət məkanlarından biridir. Hər kabini özünəməxsus divar sənəti ilə bəzədilmiş, premium nargilə xidməti, zəngin mətbəx və canlı atmosferi ilə sizi adi gündən tamamilə ayırır.",
+          book_now: "Rezervasiya et",
+          spaces_lbl: "Məkanlarımız",
+          spaces_title: "Hər küncdə\nfərqli dünya",
+          sp1: "Xüsusi Kabinlər",
+          sp1d: "Unikal divar rəsmləri ilə bəzədilmiş özəl otaqlar",
+          sp2: "Əsas Zal",
+          sp2d: "Geniş pəncərələr arxasında panoram mənzərə",
+          sp3: "Nargilə Zonu",
+          sp3d: "Premium nargilə xidməti ilə tam rahatlıq",
+          sp4: "VIP Kabin",
+          sp4d: "Xüsusi günlər üçün tam məxfi məkan",
+          sp5: "Açıq Bölmə",
+          sp5d: "Geniş masalar, rahat oturacaqlar",
+          sp6: "Lounge Bölməsi",
+          sp6d: "Rahat atmosferdə unudulmaz anlar",
+          menu_lbl: "Menyumuz",
+          menu_title: "Hər damaq\nüçün bir ləzzət",
+          t_cold: "Soyuq Qəlyanaltılar",
+          t_sal: "Salatlar",
+          t_soup: "Şorbalar",
+          t_hot: "İsti Yeməklər",
+          t_sac: "Sac Yeməkləri",
+          t_ff: "Fast Food",
+          t_pizza: "Pizzalar",
+          t_garn: "Qarnirlar",
+          t_drink: "İçkilər",
+          t_tea: "Çay Seti",
+          cat_bsnack: "Pivə Məzələri",
+          cat_beer: "Pivələr",
+          cat_whisky: "Viskılər",
+          cat_tequila: "Tekilalar",
+          cat_soft: "Alkoqolsuz İçkilər",
+          cat_fresh: "Freşlər",
+          tea_item: "Çay seti (çay + şirniyyat + qoz-fındıq)",
+          tea_price: "Qiymət üçün əlaqə",
+          gal_lbl: "Qalereya",
+          gal_title: "Melan'ı hiss edin",
+          res_lbl: "Rezervasiya",
+          res_title: "Yerinizi\nayırtın",
+          res_txt:
+            "Xüsusi bir axşam planlaşdırırsınız? Formu doldurun, biz sizinlə əlaqə saxlayaq.",
+          lbl_addr: "Ünvan",
+          lbl_phone: "Telefon",
+          lbl_hours: "İş saatları",
+          hours_val: "Hər gün: 13:00 – 01:00",
+          f_title: "Rezervasiya",
+          f_sub: "Formu doldurun, WhatsApp-a göndərilsin",
+          f_name: "Adınız",
+          f_phone: "Telefon",
+          f_date: "Tarix",
+          f_time: "Saat",
+          f_guests: "Nəfər sayı",
+          f_note: "Qeyd",
+          f_send: "WhatsApp ilə göndər",
+          ph_name: "Ad Soyad",
+          ph_phone: "+994 XX XXX XX XX",
+          ph_note: "Xüsusi istək, kabin üstünlüyü...",
+          alert: "Zəhmət olmasa bütün xanaları doldurun.",
+        },
+        ru: {
+          nav_about: "О нас",
+          nav_spaces: "Залы",
+          nav_menu: "Меню",
+          nav_gallery: "Галерея",
+          nav_res: "Бронирование",
+          hero_sub: "Lounge — Сумгаит",
+          hero_tag: "Уникальная атмосфера · Премиум кальян · Вкусная кухня",
+          scroll: "Открыть",
+          about_lbl: "О нас",
+          about_title: "Один лаунж,\nбесконечные впечатления.",
+          about_txt:
+            "Melan Lounge — одно из самых уникальных мест отдыха в Сумгаите. Каждый кабинет украшен авторской росписью стен, предлагает премиум кальян, богатую кухню и живую атмосферу.",
+          book_now: "Забронировать",
+          spaces_lbl: "Наши залы",
+          spaces_title: "В каждом углу\nновый мир",
+          sp1: "Кабинеты",
+          sp1d: "Уникальные кабинеты с авторской росписью стен",
+          sp2: "Главный зал",
+          sp2d: "Панорамный вид за большими окнами",
+          sp3: "Зона кальяна",
+          sp3d: "Полный релакс с премиум кальяном",
+          sp4: "VIP кабинет",
+          sp4d: "Полностью приватное пространство",
+          sp5: "Открытая зона",
+          sp5d: "Просторные столы, удобные кресла",
+          sp6: "Зона лаунж",
+          sp6d: "Незабываемые моменты в уютной атмосфере",
+          menu_lbl: "Наше меню",
+          menu_title: "Вкус\nдля каждого",
+          t_cold: "Холодные закуски",
+          t_sal: "Салаты",
+          t_soup: "Супы",
+          t_hot: "Горячие блюда",
+          t_sac: "Блюда на саче",
+          t_ff: "Фаст-фуд",
+          t_pizza: "Пицца",
+          t_garn: "Гарниры",
+          t_drink: "Напитки",
+          t_tea: "Чайный сет",
+          cat_bsnack: "Закуски к пиву",
+          cat_beer: "Пиво",
+          cat_whisky: "Виски",
+          cat_tequila: "Текила",
+          cat_soft: "Безалкогольные",
+          cat_fresh: "Свежевыжатые",
+          tea_item: "Чайный сет (чай + сладости + орехи)",
+          tea_price: "Уточните цену",
+          gal_lbl: "Галерея",
+          gal_title: "Почувствуйте Melan",
+          res_lbl: "Бронирование",
+          res_title: "Забронируйте\nместо",
+          res_txt:
+            "Планируете особенный вечер? Заполните форму и мы свяжемся с вами.",
+          lbl_addr: "Адрес",
+          lbl_phone: "Телефон",
+          lbl_hours: "Часы работы",
+          hours_val: "Ежедневно: 13:00 – 01:00",
+          f_title: "Бронирование",
+          f_sub: "Заполните форму, отправим в WhatsApp",
+          f_name: "Ваше имя",
+          f_phone: "Телефон",
+          f_date: "Дата",
+          f_time: "Время",
+          f_guests: "Кол-во гостей",
+          f_note: "Примечание",
+          f_send: "Отправить в WhatsApp",
+          ph_name: "Имя Фамилия",
+          ph_phone: "+994 XX XXX XX XX",
+          ph_note: "Пожелания, предпочтения по кабинету...",
+          alert: "Пожалуйста, заполните все поля.",
+        },
+        en: {
+          nav_about: "About",
+          nav_spaces: "Spaces",
+          nav_menu: "Menu",
+          nav_gallery: "Gallery",
+          nav_res: "Reservation",
+          hero_sub: "Lounge — Sumgayit",
+          hero_tag: "Unique atmosphere · Premium hookah · Exquisite cuisine",
+          scroll: "Explore",
+          about_lbl: "About Us",
+          about_title: "One lounge,\nendless moments.",
+          about_txt:
+            "Melan Lounge is one of the most unique entertainment venues in Sumgayit. Each private cabin is adorned with distinctive wall art. Premium hookah, rich cuisine, and a vibrant atmosphere will take you away from the ordinary.",
+          book_now: "Reserve Now",
+          spaces_lbl: "Our Spaces",
+          spaces_title: "A different world\nin every corner",
+          sp1: "Private Cabins",
+          sp1d: "Unique cabins decorated with original wall murals",
+          sp2: "Main Hall",
+          sp2d: "Panoramic views through large windows",
+          sp3: "Hookah Zone",
+          sp3d: "Full relaxation with premium hookah service",
+          sp4: "VIP Cabin",
+          sp4d: "Fully private space for special occasions",
+          sp5: "Open Section",
+          sp5d: "Spacious tables and comfortable seating",
+          sp6: "Lounge Section",
+          sp6d: "Unforgettable moments in a relaxed atmosphere",
+          menu_lbl: "Our Menu",
+          menu_title: "A taste for\nevery palate",
+          t_cold: "Cold Appetizers",
+          t_sal: "Salads",
+          t_soup: "Soups",
+          t_hot: "Hot Dishes",
+          t_sac: "Sac Dishes",
+          t_ff: "Fast Food",
+          t_pizza: "Pizzas",
+          t_garn: "Sides",
+          t_drink: "Drinks",
+          t_tea: "Tea Set",
+          cat_bsnack: "Beer Snacks",
+          cat_beer: "Beers",
+          cat_whisky: "Whiskies",
+          cat_tequila: "Tequilas",
+          cat_soft: "Soft Drinks",
+          cat_fresh: "Fresh Juices",
+          tea_item: "Tea set (tea + sweets + nuts)",
+          tea_price: "Ask for price",
+          gal_lbl: "Gallery",
+          gal_title: "Feel Melan",
+          res_lbl: "Reservation",
+          res_title: "Reserve\nYour Spot",
+          res_txt:
+            "Planning a special evening? Fill out the form and we'll get back to you.",
+          lbl_addr: "Address",
+          lbl_phone: "Phone",
+          lbl_hours: "Working Hours",
+          hours_val: "Daily: 1:00 PM – 1:00 AM",
+          f_title: "Reservation",
+          f_sub: "Fill the form, send via WhatsApp",
+          f_name: "Your Name",
+          f_phone: "Phone",
+          f_date: "Date",
+          f_time: "Time",
+          f_guests: "Number of Guests",
+          f_note: "Note",
+          f_send: "Send via WhatsApp",
+          ph_name: "Full Name",
+          ph_phone: "+994 XX XXX XX XX",
+          ph_note: "Special requests, cabin preference...",
+          alert: "Please fill in all required fields.",
+        },
+      };
+
+      function setLang(lang) {
+        curLang = lang;
+        document
+          .querySelectorAll(".lang-btn")
+          .forEach((b) =>
+            b.classList.toggle("active", b.textContent.toLowerCase() === lang),
+          );
+        const t = langs[lang];
+        document.querySelectorAll("[data-k]").forEach((el) => {
+          const k = el.getAttribute("data-k");
+          if (t[k] !== undefined) el.textContent = t[k];
+        });
+        document.querySelectorAll("[data-ph]").forEach((el) => {
+          const k = el.getAttribute("data-ph");
+          if (t[k] !== undefined) el.placeholder = t[k];
+        });
+        buildGuests(lang);
+        document.documentElement.lang = lang;
+      }
+    </script>
+  </body>
+</html>
