@@ -2638,17 +2638,7 @@
       });
       buildGalDots();
 
-      // ── VIDEO HOVER SOUND ──
-      document.querySelectorAll(".vid-item").forEach((item) => {
-        const v = item.querySelector("video");
-        item.addEventListener("mouseenter", () => {
-          v.muted = false;
-          v.volume = 0.5;
-        });
-        item.addEventListener("mouseleave", () => {
-          v.muted = true;
-        });
-      });
+     
 
       // ── LIGHTBOX ──
       function openLb(type, src) {
